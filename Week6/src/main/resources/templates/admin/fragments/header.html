@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<header class="container-fluid bg-dark text-white p-3"
+		th:fragment="header">
+		<div class="row align-items-center">
+			<div class="col-md-2 text-center">
+				<img th:src="@{/images/myname.jpg}" alt="Admin Avatar"
+					class="img-fluid rounded-circle" style="max-width: 100px;" />
+			</div>
+			<div class="col-md-10">
+				<h1>Category & Product Management</h1>
+				<p>Welcome to the AJAX CRUD Panel</p>
+			</div>
+		</div>
+	</header>
+</body>
+</html>

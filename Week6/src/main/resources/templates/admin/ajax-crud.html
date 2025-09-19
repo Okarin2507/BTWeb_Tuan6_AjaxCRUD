@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout.html}"> 
+<head>
+    <title>AJAX CRUD Management</title>
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="container mt-4">
+        <div class="card mb-5">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <h3>Category Management (AJAX)</h3>
+                    </div>
+                    <div class="col-6 text-end">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                            <i class="fas fa-plus"></i> Add New Category
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Icon</th>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                 <div class="row">
+                    <div class="col-6">
+                        <h3>Product Management (AJAX)</h3>
+                    </div>
+                    <div class="col-6 text-end">
+                        <button class="btn btn-primary" id="btnAddNewProduct">
+                             <i class="fas fa-plus"></i> Add New Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                 <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="addCategoryForm" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title">Add New Category</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="addCategoryName" class="form-label">Category Name</label>
+                <input type="text" class="form-control" id="addCategoryName" name="name" required>
+              </div>
+              <div class="mb-3">
+                <label for="addCategoryIcon" class="form-label">Icon</label>
+                <input type="file" class="form-control" id="addCategoryIcon" name="icon" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="editCategoryForm" enctype="multipart/form-data">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Category</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="editCategoryId" name="categoryId">
+              <div class="mb-3">
+                <label for="editCategoryName" class="form-label">Category Name</label>
+                <input type="text" class="form-control" id="editCategoryName" name="name" required>
+              </div>
+              <div class="mb-3">
+                <label for="editCategoryIcon" class="form-label">New Icon (Optional)</label>
+                <input type="file" class="form-control" id="editCategoryIcon" name="icon">
+                <small>Current Icon: <img id="currentIcon" src="" style="width: 50px;"/></small>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="productForm" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalTitle">Add New Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="productId" name="productId">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="name" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="productQuantity" class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="productQuantity" name="quantity" required>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="productPrice" class="form-label">Unit Price</label>
+                                <input type="number" step="0.01" class="form-control" id="productPrice" name="unitPrice" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Category</label>
+                            <select class="form-select" id="productCategory" name="categoryId" required>
+                                <!-- Categories loaded by AJAX -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="productImage" name="images">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btnSaveProduct">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/crud-ajax.js}"></script>
+</th:block>
+
+</body>
+</html>
